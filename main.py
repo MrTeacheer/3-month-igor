@@ -1,38 +1,20 @@
-from dotenv import dotenv_values
-from aiogram import Bot,Dispatcher,types
-from asyncio import run
-from aiogram.filters import Command
-import random
-
-
-token = dotenv_values('.env')['TOKEN']
-bot = Bot(token=token)
-dp = Dispatcher()
-
-
-names = ('name','bektur','igor')
-
-
-@dp.message(Command('start'))
-async def start(message: types.Message):
-    await message.answer(f'hello {message.from_user.first_name}')
-
-
-@dp.message(Command('my_info'))
-async def start(message: types.Message):
-    await message.answer(f'ur first_name:{message.from_user.first_name}\nur id:{message.from_user.id}\nur username:@{message.from_user.username}')
-
-
-@dp.message(Command('random'))
-async def start(message: types.Message):
-    random_name = random.choice(names)
-    await message.answer(random_name)
+import asyncio
+from bot_config import bot,dp
+from handlers import (myinfo,
+                      random,
+                      start)
 
 
 
 async def main():
+    dp.include_router(myinfo.myinfo_router)
+    dp.include_router(random.random_router)
+    dp.include_router(start.start_router)
+
+
     await dp.start_polling(bot)
 
 
+
 if __name__ == '__main__':
-    run(main())
+    asyncio.run(main())
